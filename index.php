@@ -573,10 +573,16 @@ class HondaInsightCar extends Car implements Automobile
 }
 
 $car = new HondaInsightCar;
-echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";
-exit;
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 0.0
+$car->refuel(1.1);
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 1.1
 $car->refuel();
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 10.0
+$car->refuel(0.5); // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
 
+
+
+exit;
 // 0 degrees == straight ahead.
 $car->drive(1.0, 5.2, 0.0);
 echo "Miles driven: " . Car::formatStat($car->calculateMileage()) . " miles\n";
