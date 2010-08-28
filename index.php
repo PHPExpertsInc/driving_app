@@ -468,18 +468,39 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public function turnOn()
     {
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": Turning on the car...\n";
+        }
+
         $this->state = self::STATE_POWERED_ON;
         $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
         $this->notify();
+
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": Successfully turned on the car\n";
+        }
+
     }
 
     public function turnOff()
     {
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": Turning off the car...\n";
+        }
+
         $this->state = self::STATE_POWERED_OFF;
         $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
         $this->notify();
+
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": Successfully turned off the car\n";
+        }
     }
     
     // Right now our car will only be able to drive in a straight line
@@ -551,15 +572,26 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public function downShift()
     {
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": Trying to downshift.\n";
+        }
+
         // Downshift irrationally increases the gear value.
         try
         {
             $this->gearShaft->changeGear($this->currentGear + 1);
             ++$this->currentGear;
+            $successful = true;
         }
         catch(GearShaftException $e)
         {
             printf("BZZZ: %s\n", $e->getMessage());
+        }
+
+        if (DEBUG >= 1)
+        {
+            echo __CLASS__ . ": $status downshifted.\n";
         }
     }
     
