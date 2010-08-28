@@ -547,13 +547,14 @@ class HondaInsightCar extends Car implements Automobile
 $car = new HondaInsightCar;
 
 // Attempt to change gears when off.
-$car->downShift(); // Expect "BZZZ: Car must be on to change gears."
-$car->turnOn(); // Expect "Car: Successfully turned on the car."
-$car->downShift();
-$car->turnOff();
+$car->downShift(); // Expect "BZZZ: Car must be on to change gears." and "HondaInsightCar: Unsuccessfully downshifted."
+$car->turnOn();    // Expect "HondaInsightCar: Successfully turned on the car."
+$car->downShift(); // Expect "HondaInsightCar: Successfully downshifted."
+$car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
+
+$car->turnOn();    // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
 
 exit;
-$car->turnOn();
 
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 0.0
 $car->refuel(1.1);
