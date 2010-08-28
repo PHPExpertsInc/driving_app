@@ -156,25 +156,6 @@ abstract class DriveTrain implements SplObserver
         }
     }
 
-    /* For observer pattern */
-    // This gets called whenever the engine's state changes.
-    public function update(SplSubject $subject)
-    {
-        // Listen for gear change notices.
-        if ($subject instanceof GearShaft)
-        {
-            if ($subject->official_notice['notice'] == GearShaft::NOTICE_GEAR_CHANGED)
-            {
-                if (DEBUG >= 1)
-                {
-                    printf(__CLASS__ . ": Notified that gear has changed from %s to %s\n", $this->currentGear, $subject->official_notice['value']);
-                }
-
-                $this->currentGear = $subject->official_notice['value'];
-            }
-        }
-    }
-
     public function getDistanceTravelled()
     {
         $distance = 0.0;
@@ -197,6 +178,25 @@ abstract class DriveTrain implements SplObserver
 
         // Return average speed for all.
         return $speed / count($this->wheels);
+    }
+
+    /* For observer pattern */
+    // This gets called whenever the engine's state changes.
+    public function update(SplSubject $subject)
+    {
+        // Listen for gear change notices.
+        if ($subject instanceof GearShaft)
+        {
+            if ($subject->official_notice['notice'] == GearShaft::STATUS_GEAR_CHANGED)
+            {
+                if (DEBUG >= 1)
+                {
+                    printf(__CLASS__ . ": Notified that gear has changed from %s to %s.\n", $this->currentGear, $subject->official_notice['value']);
+                }
+
+                $this->currentGear = $subject->official_notice['value'];
+            }
+        }
     }
 }
 
@@ -329,27 +329,35 @@ class GasTank
 
 class GearShaftException extends Exception
 {
-    const ERROR_MUST_PARK_REVERSE = 'Must park to go into reverse.';
-    const ERROR_MUST_PARK_DRIVE = 'Must park to go forward.';
+    const ERROR_CAR_IS_OFF = 'Car must be on to change gears.';
+    const ERROR_MUST_PARK_ON = 'Must be in park to turn on the car.';
+    const ERROR_MUST_PARK_REVERSE = 'Must be in park to go into reverse.';
+    const ERROR_MUST_PARK_DRIVE = 'Must in park to go forward.';
 
     const NOTICE_MIN_GEAR = 'Cannot shift higher';
     const NOTICE_MAX_GEAR = 'Cannot shift lower.';
 }
 
-class GearShaft extends CarPartSubject
+class GearShaft extends CarPartSubject implements SplObserver
 {
-    const NOTICE_GEAR_CHANGED = 'Gear changed';
+    const STATUS_GEAR_CHANGED = 'Gear changed';
 
     const GEAR_PARK = 0;
     const GEAR_REVERSE = 1;
     const GEAR_NEUTRAL = 2;
     const GEAR_DRIVE = 3;
 
+    private $currentCarState = Car::STATE_POWERED_OFF;
     private $currentGear = self::GEAR_PARK;
 
     public function changeGear($gear)
     {
         // Sanity checks.
+        if ($this->currentCarState == Car::STATE_POWERED_OFF)
+        {
+            throw new GearShaftException(GearShaftException::ERROR_CAR_IS_OFF);
+        }
+
         if ($gear < self::GEAR_PARK)
         {
             throw new GearShaftException(GearShaftException::NOTICE_MIN_GEAR);
@@ -369,14 +377,41 @@ class GearShaft extends CarPartSubject
         }
 
         $this->currentGear = $gear;
-        $this->official_notice = array('notice' => self::NOTICE_GEAR_CHANGED,
+        $this->official_notice = array('notice' => self::STATUS_GEAR_CHANGED,
                                        'value' => $gear);
         $this->notify();
+    }
+
+    /* For observer pattern */
+    // This gets called whenever the engine's state changes.
+    public function update(SplSubject $subject)
+    {
+        // Listen for Car state change notices.
+        if ($subject instanceof Car)
+        {
+            if ($subject->official_notice['notice'] == Car::NOTICE_STATE_CHANGED)
+            {
+                if (DEBUG >= 1)
+                {
+                    printf(__CLASS__ . ": Notified that car's state has changed to %s.\n", $subject->official_notice['value']);
+                }
+
+                // Turn off if the car is not in park when trying to start.
+                if ($this->currentCarState == Car::STATE_POWERED_ON && $this->currentGear != self::GEAR_PARK)
+                {
+                    throw new GearShaftException(GearShaftException::ERROR_MUST_PARK_ON);
+                }
+
+                $this->currentCarState = $subject->official_notice['value'];
+            }
+        }
     }
 }
 
 interface Automobile
 {
+    public function turnOn();
+    public function turnOff();
     public function drive($footPressure, $minutesToDrive, $steeringWheelAngle);
     public function brake($footPressure);
     public function refuel();
@@ -392,8 +427,13 @@ class CarException extends Exception
     const ERROR_INAPPROPRIATE_GEAR = 'The appropriate gear for this action is not set.';
 }
 
-abstract class Car implements Automobile
+abstract class Car extends CarPartSubject implements Automobile
 {
+    const STATE_POWERED_OFF = 0;
+    const STATE_POWERED_ON = 1;
+    
+    const NOTICE_STATE_CHANGED = 'The car\'s state has changed';
+
     // Objects for the Composite Pattern.
     /**
     * @var Engine
@@ -413,6 +453,7 @@ abstract class Car implements Automobile
     protected $gearShaft;
 
     // Class properties.
+    protected $state;
     protected $currentGear;
 
     /**
@@ -425,6 +466,22 @@ abstract class Car implements Automobile
         $this->build();
     }
 
+    public function turnOn()
+    {
+        $this->state = self::STATE_POWERED_ON;
+        $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
+                                       'value' => $this->state);
+        $this->notify();
+    }
+
+    public function turnOff()
+    {
+        $this->state = self::STATE_POWERED_OFF;
+        $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
+                                       'value' => $this->state);
+        $this->notify();
+    }
+    
     // Right now our car will only be able to drive in a straight line
     // either forward or in reverse.
     public function drive($footPressure, $minutesToDrive, $steeringWheelAngle)
@@ -502,14 +559,7 @@ abstract class Car implements Automobile
         }
         catch(GearShaftException $e)
         {
-            if ($e->getMessage() == GearShaftException::NOTICE_MAX_GEAR)
-            {
-                printf("BZZZ: %s\n", $e->getMessage());
-            }
-            else
-            {
-                throw $e;
-            }
+            printf("BZZZ: %s\n", $e->getMessage());
         }
     }
     
@@ -567,12 +617,24 @@ class HondaInsightCar extends Car implements Automobile
         // Add a drive train
         $this->drivetrain = new CarDriveTrain($wheels);
 
+        // Register GearShaft as an observer of Car.
+        $this->attach($this->gearShaft);
+
         // Register CarDriveTrain as an observer of GearShaft.
-        $this->gearShaft->attach($this->drivetrain);
+        $this->gearShaft->attach($this->drivetrain);        
     }
 }
 
 $car = new HondaInsightCar;
+
+// Attempt to change gears when off.
+$car->downShift(); // Expect "BZZZ: Car must be on to change gears."
+$car->turnOn();
+$car->downShift();
+
+exit;
+$car->turnOn();
+
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 0.0
 $car->refuel(1.1);
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 1.1
