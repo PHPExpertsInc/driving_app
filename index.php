@@ -200,7 +200,7 @@ class GasTankException extends Exception
 
 class GasTank
 {
-    const REFUEL_UNTIL_FULL = -9999.5;
+    const REFUEL_UNTIL_FULL = 'max';
 
     private $tankSize;
     private $fuel = 0.0;
@@ -213,7 +213,7 @@ class GasTank
     public function refuel($amount)
     {
         // Sanity checks.
-        if (!is_numeric($amount))
+        if ($amount != self::REFUEL_UNTIL_FULL && !is_numeric($amount))
         {
             error_log('Invalid refuel amount: ' . $amount);
             trigger_error('Invalid refuel amount.', E_USER_ERROR);
@@ -462,7 +462,11 @@ abstract class Car extends CarPartSubject implements Automobile
     {
         try
         {
-            $this->gasTank->refuel($amount);
+            // Functional equivalent of running $this->gasTank->refuel($amount);
+            attemptAction(get_class($this), 
+                          array('refuel by ' . $amount . ' gallons', 'refueled by ' . $amount . ' gallons'), 
+                          array($this->gasTank, 'refuel'), 
+                          array($amount));
         }
         catch(GasTankException $e)
         {
@@ -574,9 +578,9 @@ $car->turnOn();    // Expect "HondaInsightCar: Successfully turned on the car."
 $car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
 
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 0.0 gallons."
-$car->refuel(1.1);
+$car->refuel(1.1); // Expect "HondaInsightCar: Successfully refueled by 1.1 gallons."
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 1.1 gallons."
-$car->refuel();
+$car->refuel();      // Expect "HondaInsightCar: Successfully refueled by max gallons."
 exit;
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect 10.0
 $car->refuel(0.5); // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
