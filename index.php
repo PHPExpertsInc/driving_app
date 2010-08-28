@@ -533,6 +533,11 @@ abstract class Car implements Automobile
             }
         }
     }
+    
+    public static function formatStat($statistic)
+    {
+        return sprintf('%.1f', round($statistic, 1));
+    }
 }
 
 /**
@@ -568,11 +573,11 @@ class HondaInsightCar extends Car implements Automobile
 }
 
 $car = new HondaInsightCar;
-echo "Fuel remaining: " . round($car->getFuelRemaining(), 2) . " gallons\n";
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";
 exit;
 $car->refuel();
 
 // 0 degrees == straight ahead.
 $car->drive(1.0, 5.2, 0.0);
-echo "Miles driven: " . $car->calculateMileage() . " miles\n";
-echo "Current mileage: " . $car->calculateFuelEfficiency() . " mpg\n";
+echo "Miles driven: " . Car::formatStat($car->calculateMileage()) . " miles\n";
+echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg\n";
