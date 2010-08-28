@@ -568,14 +568,17 @@ $car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
 $car->turnOn();    // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
 
 // Get into park.
-while ($car->upShift() != GearShaft::GEAR_PARK);  // Expect 2x "HondaInsightCar: Successfully upshifted.
-exit;
+while ($car->upShift() != GearShaft::GEAR_PARK);  // Expect 2x "HondaInsightCar: Successfully upshifted."
 
-echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 0.0
+$car->turnOn();    // Expect "HondaInsightCar: Successfully turned on the car."
+$car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
+
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 0.0 gallons."
 $car->refuel(1.1);
-echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 1.1
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 1.1 gallons."
 $car->refuel();
-echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 10.0
+exit;
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect 10.0
 $car->refuel(0.5); // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
 
 
@@ -583,5 +586,5 @@ $car->refuel(0.5); // Expect "Inform the clerk that 0.50 gallons needs to be ref
 exit;
 // 0 degrees == straight ahead.
 $car->drive(1.0, 5.2, 0.0);
-echo "Miles driven: " . Car::formatStat($car->calculateMileage()) . " miles\n";
-echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg\n";
+echo "Miles driven: " . Car::formatStat($car->calculateMileage()) . " miles.\n";
+echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg.\n";
