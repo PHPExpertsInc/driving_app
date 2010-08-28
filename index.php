@@ -189,7 +189,7 @@ abstract class DriveTrain implements SplObserver
         {
             if ($subject->official_notice['notice'] == GearShaft::STATUS_GEAR_CHANGED)
             {
-                if (DEBUG >= 1)
+                if (DEBUG >= 2)
                 {
                     printf(__CLASS__ . ": Notified that gear has changed from %s to %s.\n", $this->currentGear, $subject->official_notice['value']);
                 }
@@ -391,7 +391,7 @@ class GearShaft extends CarPartSubject implements SplObserver
         {
             if ($subject->official_notice['notice'] == Car::NOTICE_STATE_CHANGED)
             {
-                if (DEBUG >= 1)
+                if (DEBUG >= 2)
                 {
                     printf(__CLASS__ . ": Notified that car's state has changed to %s.\n", $subject->official_notice['value']);
                 }
@@ -572,6 +572,7 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public function downShift()
     {
+        $status = "Unsuccessfully";
         if (DEBUG >= 1)
         {
             echo __CLASS__ . ": Trying to downshift.\n";
@@ -582,7 +583,7 @@ abstract class Car extends CarPartSubject implements Automobile
         {
             $this->gearShaft->changeGear($this->currentGear + 1);
             ++$this->currentGear;
-            $successful = true;
+            $status = "Successfully";
         }
         catch(GearShaftException $e)
         {
