@@ -32,7 +32,7 @@ function attemptAction($class, $action, $actor, $args = null)
         $past_action .= 'ed';
     }
 
-    if (DEBUG >= 1)
+    if (DEBUG >= 2)
     {
         echo  "$class: Trying to {$present_action}.\n";
     }
@@ -225,7 +225,7 @@ abstract class DriveTrain implements SplObserver
         {
             if ($subject->official_notice['notice'] == GearShaft::STATUS_GEAR_CHANGED)
             {
-                if (DEBUG >= 2)
+                if (DEBUG >= 3)
                 {
                     printf(__CLASS__ . ": Notified that gear has changed from %s to %s.\n", $this->currentGear, $subject->official_notice['value']);
                 }
@@ -427,7 +427,7 @@ class GearShaft extends CarPartSubject implements SplObserver
         {
             if ($subject->official_notice['notice'] == Car::NOTICE_STATE_CHANGED)
             {
-                if (DEBUG >= 2)
+                if (DEBUG >= 3)
                 {
                     printf(__CLASS__ . ": Notified that car's state has changed to %s.\n", $subject->official_notice['value']);
                 }
