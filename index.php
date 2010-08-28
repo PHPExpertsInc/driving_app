@@ -174,6 +174,30 @@ abstract class DriveTrain implements SplObserver
             }
         }
     }
+
+    public function getDistanceTravelled()
+    {
+        $distance = 0.0;
+        foreach ($this->wheels as $wheel)
+        {
+            $distance += $wheel->getDistanceTravelled();
+        }
+
+        // Return average speed for all.
+        return $distance / count($this->wheels);        
+    }
+    
+    public function getSpeed()
+    {
+        $speed = 0.0;
+        foreach ($this->wheels as $wheel)
+        {
+            $speed += $wheel->getSpeed();
+        }
+
+        // Return average speed for all.
+        return $speed / count($this->wheels);
+    }
 }
 
 class CarDriveTrain extends DriveTrain
@@ -244,7 +268,7 @@ class GasTank
     const REFUEL_UNTIL_FULL = -9999.5;
 
     private $tankSize;
-    private $fuel;
+    private $fuel = 0.0;
 
     public function __construct($tankSize)
     {
@@ -281,7 +305,12 @@ class GasTank
 
     public function getFuelRemaining()
     {
-        return $this->fuel;
+        return (float)$this->fuel;
+    }
+    
+    public function calculateFuelUsedPerTank()
+    {
+        return (float)$this->tankSize - (float)$this->fuel;
     }
 
     /**
@@ -302,6 +331,9 @@ class GearShaftException extends Exception
 {
     const ERROR_MUST_PARK_REVERSE = 'Must park to go into reverse.';
     const ERROR_MUST_PARK_DRIVE = 'Must park to go forward.';
+
+    const NOTICE_MIN_GEAR = 'Cannot shift higher';
+    const NOTICE_MAX_GEAR = 'Cannot shift lower.';
 }
 
 class GearShaft extends CarPartSubject
@@ -317,6 +349,16 @@ class GearShaft extends CarPartSubject
 
     public function changeGear($gear)
     {
+        // Sanity checks.
+        if ($gear < self::GEAR_PARK)
+        {
+            throw new GearShaftException(GearShaftException::NOTICE_MIN_GEAR);
+        }
+        else if ($gear > self::GEAR_DRIVE)
+        {
+            throw new GearShaftException(GearShaftException::NOTICE_MAX_GEAR);
+        }
+
         if ($gear == self::GEAR_REVERSE && $this->currentGear == self::GEAR_DRIVE)
         {
             throw new GearShaftException(GearShaftException::ERROR_MUST_PARK_REVERSE);
@@ -335,13 +377,12 @@ class GearShaft extends CarPartSubject
 
 interface Automobile
 {
-    protected function build();
     public function drive($footPressure, $minutesToDrive, $steeringWheelAngle);
     public function brake($footPressure);
     public function refuel();
     public function getMileage();
     public function calculateFuelEfficiency();
-    public function getRemainingFuel();
+    public function getFuelRemaining();
     public function downShift();
     public function upShift();
 }
@@ -374,11 +415,11 @@ abstract class Car implements Automobile
     // Class properties.
     protected $currentGear;
 
-    protected function build()
-    {
-        trigger_error('If this function is not overrideen, your app is not coded properly.', E_USER_ERROR);
-    }
-
+    /**
+    * Make each Car class build itself.
+    */
+    abstract protected function build();
+    
     public function __construct()
     {
         $this->build();
@@ -433,12 +474,65 @@ abstract class Car implements Automobile
         }
     }
 
-    public function getMileage() { }
-    public function calculateFuelEfficiency() { }
+    public function getMileage()
+    {
+        return (float)$this->drivetrain->getDistanceTravelled();
+    }
 
-    public function getRemainingFuel() { }
-    public function downShift() { }
-    public function upShift() { }
+    public function calculateFuelEfficiency()
+    {
+        $distance = $this->getMileage();
+        $fuelUsed = $this->gasTank->calculateFuelUsedPerTank();
+        
+        return $distance / $fuelUsed;
+    }
+
+    public function getFuelRemaining()
+    {
+        return $this->gasTank->getFuelRemaining();
+    }
+
+    public function downShift()
+    {
+        // Downshift irrationally increases the gear value.
+        try
+        {
+            $this->gearShaft->changeGear($this->currentGear + 1);
+            ++$this->currentGear;
+        }
+        catch(GearShaftException $e)
+        {
+            if ($e->getMessage() == GearShaftException::NOTICE_MAX_GEAR)
+            {
+                printf("BZZZ: %s\n", $e->getMessage());
+            }
+            else
+            {
+                throw $e;
+            }
+        }
+    }
+    
+    public function upShift()
+    {
+        // Upshift irrationally decreases the gear value.
+        try
+        {
+            $this->gearShaft->changeGear($this->currentGear - 1);
+            --$this->currentGear;
+        }
+        catch(GearShaftException $e)
+        {
+            if ($e->getMessage() == GearShaftException::NOTICE_MIN_GEAR)
+            {
+                printf("BZZZ: %s\n", $e->getMessage());
+            }
+            else
+            {
+                throw $e;
+            }
+        }
+    }
 }
 
 /**
@@ -453,7 +547,7 @@ class HondaInsightCar extends Car implements Automobile
         $this->gasTank = new GasTank(10.0);
 
         // Add an engine.
-        $this->engine = new Engine($this->gasTank);
+        $this->engine = new HybridEngine($this->gasTank);
 
         // Add a GearShaft.
         $this->gearShaft = new GearShaft;
@@ -474,8 +568,11 @@ class HondaInsightCar extends Car implements Automobile
 }
 
 $car = new HondaInsightCar;
+echo "Fuel remaining: " . round($car->getFuelRemaining(), 2) . " gallons\n";
+exit;
 $car->refuel();
+
 // 0 degrees == straight ahead.
 $car->drive(1.0, 5.2, 0.0);
-echo "Miles driven: " . $car->calculateMileage() . "\n";
-echo "Current mileage: " . $car->calculateFuelEfficiency() . "\n";
+echo "Miles driven: " . $car->calculateMileage() . " miles\n";
+echo "Current mileage: " . $car->calculateFuelEfficiency() . " mpg\n";
