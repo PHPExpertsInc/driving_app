@@ -329,7 +329,7 @@ class GasTank
 
 class GearShaftException extends Exception
 {
-    const ERROR_CAR_IS_OFF = 'Car must be on to change gears.';
+    const ERROR_CAR_IS_OFF = 'Car must be turned on to change gears.';
     const ERROR_MUST_PARK_ON = 'Must be in park to turn on the car.';
     const ERROR_MUST_PARK_REVERSE = 'Must be in park to go into reverse.';
     const ERROR_MUST_PARK_DRIVE = 'Must in park to go forward.';
@@ -397,7 +397,7 @@ class GearShaft extends CarPartSubject implements SplObserver
                 }
 
                 // Turn off if the car is not in park when trying to start.
-                if ($this->currentCarState == Car::STATE_POWERED_ON && $this->currentGear != self::GEAR_PARK)
+                if ($subject->official_notice['value'] == Car::STATE_POWERED_ON && $this->currentGear != self::GEAR_PARK)
                 {
                     throw new GearShaftException(GearShaftException::ERROR_MUST_PARK_ON);
                 }
