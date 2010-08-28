@@ -15,8 +15,36 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
+// Figure out if we're running from the command line or a web server.
+if (php_sapi_name() == 'cli')
+{
+    $args = getopt('', array('debug::'));
+
+    if (isset($args['debug']))
+    {
+        $debug_level = $args['debug'];
+    }
+}
+else
+{
+    if (isset($_COOKIE['debug']))
+    {
+        $debug_level = filter_input(INPUT_COOKIE, 'debug', FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    if (isset($_GET['debug']))
+    {
+        $debug_level = filter_input(INPUT_GET, 'debug', FILTER_SANITIZE_NUMBER_INT);
+    }
+}
+
+if (!isset($debug_level))
+{
+    $debug_level = 0;
+}
+
 define('ENVIRONMENT', 'dev');
-define('DEBUG', 1);
+define('DEBUG', $debug_level);
 
 function attemptAction($class, $action, $actor, $args = null)
 {
