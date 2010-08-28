@@ -287,8 +287,15 @@ class GearShaft extends CarPartSubject implements SplObserver
 
     public function changeGear($gear)
     {
+        // Do nothing if gear is the same.
+        if ($gear == $this->currentGear) { return $gear; }
+
+        // Figure out if we're upshifting or downshifting.
+        $downShifting = (bool)($gear > $this->currentGear);
+
         // Sanity checks.
-        if ($this->currentCarState == Car::STATE_POWERED_OFF)
+        // Can't downshift with the car off.
+        if ($downShifting === true &&   $this->currentCarState == Car::STATE_POWERED_OFF)
         {
             throw new GearShaftException(GearShaftException::ERROR_CAR_IS_OFF);
         }
