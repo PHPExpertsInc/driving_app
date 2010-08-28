@@ -567,6 +567,8 @@ $car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
 
 $car->turnOn();    // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
 
+// Get into park.
+while ($car->upShift() != GearShaft::GEAR_PARK);  // Expect 2x "HondaInsightCar: Successfully upshifted.
 exit;
 
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons\n";   // Expect 0.0
