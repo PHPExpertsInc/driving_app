@@ -18,6 +18,42 @@
 define('ENVIRONMENT', 'dev');
 define('DEBUG', 1);
 
+function attemptAction($class, $action, $actor, $args = null)
+{
+    $status = "Unsuccessfully";
+    if (is_array($action))
+    {
+        $present_action = $action[0];
+        $past_action = $action[1];
+    }
+    else
+    {
+        $present_action = $past_action = $action;
+        $past_action .= 'ed';
+    }
+
+    if (DEBUG >= 1)
+    {
+        echo  "$class: Trying to {$present_action}.\n";
+    }
+    
+    // Downshift irrationally increases the gear value.
+    try
+    {
+        call_user_func_array($actor, $args);
+        $status = "Successfully";
+    }
+    catch(GearShaftException $e)
+    {
+        printf("BZZZ: %s\n", $e->getMessage());
+    }
+
+    if (DEBUG >= 1)
+    {
+        echo "$class: $status {$past_action}.\n";
+    }
+}
+
 abstract class CarPartSubject implements SplSubject
 {
     protected $observers = null;
@@ -466,41 +502,23 @@ abstract class Car extends CarPartSubject implements Automobile
         $this->build();
     }
 
+    
     public function turnOn()
     {
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": Turning on the car...\n";
-        }
-
         $this->state = self::STATE_POWERED_ON;
         $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
-        $this->notify();
-
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": Successfully turned on the car\n";
-        }
-
+        // Functional equivalent of running $this->notify();
+        attemptAction(get_class($this), array('turn on the car', 'turned on the car'), array($this, 'notify'), array($this->currentGear - 1));
     }
 
     public function turnOff()
     {
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": Turning off the car...\n";
-        }
-
         $this->state = self::STATE_POWERED_OFF;
         $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
-        $this->notify();
-
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": Successfully turned off the car\n";
-        }
+        // Functional equivalent of running $this->notify();
+        attemptAction(get_class($this), array('turn off the car', 'turned off the car'), array($this, 'notify'), array($this->currentGear - 1));
     }
     
     // Right now our car will only be able to drive in a straight line
@@ -572,49 +590,18 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public function downShift()
     {
-        $status = "Unsuccessfully";
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": Trying to downshift.\n";
-        }
-
-        // Downshift irrationally increases the gear value.
-        try
-        {
-            $this->gearShaft->changeGear($this->currentGear + 1);
-            ++$this->currentGear;
-            $status = "Successfully";
-        }
-        catch(GearShaftException $e)
-        {
-            printf("BZZZ: %s\n", $e->getMessage());
-        }
-
-        if (DEBUG >= 1)
-        {
-            echo __CLASS__ . ": $status downshifted.\n";
-        }
+        // downShift irrationally increases the gear value.
+        // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear + 1);
+        attemptAction(get_class($this), 'downshift', array($this->gearShaft, 'changeGear'), array($this->currentGear + 1));
+        ++$this->currentGear;
     }
     
     public function upShift()
     {
-        // Upshift irrationally decreases the gear value.
-        try
-        {
-            $this->gearShaft->changeGear($this->currentGear - 1);
-            --$this->currentGear;
-        }
-        catch(GearShaftException $e)
-        {
-            if ($e->getMessage() == GearShaftException::NOTICE_MIN_GEAR)
-            {
-                printf("BZZZ: %s\n", $e->getMessage());
-            }
-            else
-            {
-                throw $e;
-            }
-        }
+        // Upshift irrationally decreases the gear value.        
+        // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear - 1);
+        attemptAction(get_class($this), 'upshift', array($this->gearShaft, 'changeGear'), array($this->currentGear - 1));
+        --$this->currentGear;
     }
     
     public static function formatStat($statistic)
@@ -662,8 +649,9 @@ $car = new HondaInsightCar;
 
 // Attempt to change gears when off.
 $car->downShift(); // Expect "BZZZ: Car must be on to change gears."
-$car->turnOn();
+$car->turnOn(); // Expect "Car: Successfully turned on the car."
 $car->downShift();
+$car->turnOff();
 
 exit;
 $car->turnOn();
