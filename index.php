@@ -564,26 +564,25 @@ class HondaInsightCar extends Car implements Automobile
 $car = new HondaInsightCar;
 
 // Attempt to change gears when off.
-$car->downShift(); // Expect "BZZZ: Car must be on to change gears." and "HondaInsightCar: Unsuccessfully downshifted."
-$car->turnOn();    // Expect "HondaInsightCar: Successfully turned on the car."
-$car->downShift(); // Expect "HondaInsightCar: Successfully downshifted."
-$car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
+$car->downShift();   // Expect "BZZZ: Car must be on to change gears." and "HondaInsightCar: Unsuccessfully downshifted."
+$car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car."
+$car->downShift();   // Expect "HondaInsightCar: Successfully downshifted."
+$car->turnOff();     // Expect "HondaInsightCar: Successfully turned off the car."
 
-$car->turnOn();    // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
+$car->turnOn();      // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
 
 // Get into park.
 while ($car->upShift() != GearShaft::GEAR_PARK);  // Expect 2x "HondaInsightCar: Successfully upshifted."
 
-$car->turnOn();    // Expect "HondaInsightCar: Successfully turned on the car."
-$car->turnOff();   // Expect "HondaInsightCar: Successfully turned off the car."
+$car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car."
+$car->turnOff();     // Expect "HondaInsightCar: Successfully turned off the car."
 
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 0.0 gallons."
-$car->refuel(1.1); // Expect "HondaInsightCar: Successfully refueled by 1.1 gallons."
+$car->refuel(1.1);   // Expect "HondaInsightCar: Successfully refueled by 1.1 gallons."
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 1.1 gallons."
 $car->refuel();      // Expect "HondaInsightCar: Successfully refueled by max gallons."
-exit;
-echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect 10.0
-$car->refuel(0.5); // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 10.0 gallons."
+$car->refuel(0.5);   // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
 
 
 
