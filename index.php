@@ -15,121 +15,10 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-// Figure out if we're running from the command line or a web server.
-if (php_sapi_name() == 'cli')
-{
-    $args = getopt('', array('debug::'));
-
-    if (isset($args['debug']))
-    {
-        $debug_level = $args['debug'];
-    }
-}
-else
-{
-    if (isset($_COOKIE['debug']))
-    {
-        $debug_level = filter_input(INPUT_COOKIE, 'debug', FILTER_SANITIZE_NUMBER_INT);
-    }
-
-    if (isset($_GET['debug']))
-    {
-        $debug_level = filter_input(INPUT_GET, 'debug', FILTER_SANITIZE_NUMBER_INT);
-    }
-}
-
-if (!isset($debug_level))
-{
-    $debug_level = 0;
-}
-
 define('ENVIRONMENT', 'dev');
-define('DEBUG', $debug_level);
 
-function attemptAction($class, $action, $actor, $args = null)
-{
-    $status = "Unsuccessfully";
-    if (is_array($action))
-    {
-        $present_action = $action[0];
-        $past_action = $action[1];
-    }
-    else
-    {
-        $present_action = $past_action = $action;
-        $past_action .= 'ed';
-    }
-
-    if (DEBUG >= 2)
-    {
-        echo  "$class: Trying to {$present_action}.\n";
-    }
-    
-    // Downshift irrationally increases the gear value.
-    try
-    {
-        call_user_func_array($actor, $args);
-        $status = "Successfully";
-    }
-    catch(GearShaftException $e)
-    {
-        printf("BZZZ: %s\n", $e->getMessage());
-    }
-
-    if (DEBUG >= 1)
-    {
-        echo "$class: $status {$past_action}.\n";
-    }
-}
-
-abstract class CarPartSubject implements SplSubject
-{
-    protected $observers = null;
-
-    // This is the message we wish to relay to the observers.
-    public $official_notice;
-
-    /* For observer pattern */
-    public function attach(SplObserver $observer)
-    {
-        $this->observers[] = $observer;
-    }
-
-    public function detach(SplObserver $observer_in)
-    {
-        foreach ($this->observers as $key => $observer)
-        {
-            if (spl_object_hash($observer) == spl_object_hash($observer_in))
-            {
-                unset($this->observers[$key]);
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function notify()
-    {
-        if (!is_array($this->observers) || empty($this->observers))
-        {
-            return;
-        }
-
-        foreach ($this->observers as $observer)
-        {
-            $observer->update($this);
-        }
-    }
-}
-
-interface Engine
-{
-    public function __construct(GasTank $gasTank);
-    public function revUp($footPressure);
-    public function revDown($footPressure);   
-}
+require 'lib/Cars/Cars.php';
+require 'lib/Cars/HondaInsight.car.php';
 
 class CombustionEngine implements Engine, SplSubject
 {
@@ -165,11 +54,6 @@ class CombustionEngine implements Engine, SplSubject
     public function notify()
     {
     }
-}
-
-class HybridEngine extends CombustionEngine implements Engine
-{
-
 }
 
 class DriveTrainException extends Exception
@@ -264,21 +148,8 @@ abstract class DriveTrain implements SplObserver
     }
 }
 
-class CarDriveTrain extends DriveTrain
-{
-    const NUMBER_OF_WHEELS = 4;
-
-    public function __construct(array $wheels)
-    {
-        // Do some sanity checks.
-        if (count($wheels) != self::NUMBER_OF_WHEELS)
-        {
-            throw DriveTrainException(DriveTrainException::ERROR_INVALID_WHEEL_NUMBER);
-        }
-
-        parent::__construct($wheels);
-    }
-}
+require 'lib/Cars/parts/HybridEngine.part.php';
+require 'lib/Cars/parts/CarDriveTrain.part.php';
 
 class Wheel
 {
