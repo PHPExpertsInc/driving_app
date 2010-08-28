@@ -315,6 +315,8 @@ class GearShaft extends CarPartSubject implements SplObserver
         $this->official_notice = array('notice' => self::STATUS_GEAR_CHANGED,
                                        'value' => $gear);
         $this->notify();
+        
+        return $this->currentGear;
     }
 
     /* For observer pattern */
@@ -493,6 +495,8 @@ abstract class Car extends CarPartSubject implements Automobile
         // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear + 1);
         attemptAction(get_class($this), 'downshift', array($this->gearShaft, 'changeGear'), array($this->currentGear + 1));
         ++$this->currentGear;
+        
+        return $this->currentGear;
     }
     
     public function upShift()
@@ -501,6 +505,8 @@ abstract class Car extends CarPartSubject implements Automobile
         // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear - 1);
         attemptAction(get_class($this), 'upshift', array($this->gearShaft, 'changeGear'), array($this->currentGear - 1));
         --$this->currentGear;
+        
+        return $this->currentGear;
     }
     
     public static function formatStat($statistic)
