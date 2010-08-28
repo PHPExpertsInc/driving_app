@@ -290,7 +290,7 @@ class GasTank
         }
         else
         {
-            if ($this->fuel + $amount > $this->fuel)
+            if ($this->fuel + $amount > $this->tankSize)
             {
                 $e = new GasTankException(GasTankException::NOTICE_TOO_MUCH_GAS);
                 $e->remainingGas = ($this->fuel + $amount) - $this->tankSize;
@@ -464,7 +464,7 @@ abstract class Car implements Automobile
         {
             if ($e->getMessage() == GasTankException::NOTICE_TOO_MUCH_GAS)
             {
-                printf("Inform the clerk that %d gallons needs to be refunded.\n", $e->remainingGas);
+                printf("Inform the clerk that %.2f gallons needs to be refunded.\n", $e->remainingGas);
             }
             else
             {
@@ -486,7 +486,7 @@ abstract class Car implements Automobile
         
         return $distance / $fuelUsed;
     }
-
+    
     public function getFuelRemaining()
     {
         return $this->gasTank->getFuelRemaining();
