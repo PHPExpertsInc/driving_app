@@ -55,3 +55,22 @@ echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
 
 // Expect "Current mileage: 0.0 mpg."
 echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg.\n";
+
+$car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car."
+
+// Get into drive.
+// Expect 3x "HondaInsightCar: Successfully downshifted."
+while ($car->downShift() != GearShaft::GEAR_DRIVE);
+
+$car->drive(1.0, 5.2, 0.0);  
+
+// Expect "Miles driven: 0.0 miles."
+echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
+
+// Expect "Current mileage: 0.0 mpg."
+echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg.\n";
+
+// Get into park.
+// Expect 3x "HondaInsightCar: Successfully upshifted."
+while ($car->upShift() != GearShaft::GEAR_PARK);
+$car->turnOff();      // Expect "HondaInsightCar: Successfully turned off the car."
