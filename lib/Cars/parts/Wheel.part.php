@@ -18,9 +18,8 @@
 class Wheel
 {
     const FORCE_SPEED_RATIO = 7.18;
-    const SPEED_MILE_RATIO = 0.005;
 
-    private $speed;
+    private $speed = 0;
     private $distance = 0;
     private $direction;
 
@@ -28,8 +27,8 @@ class Wheel
     {
         $this->direction = $direction;
     }
-
-    public function spinForward($forceApplied)
+    
+    public function changeSpinSpeed($forceApplied)
     {
         // Set the traveling speed.
         $acceleration = self::FORCE_SPEED_RATIO * $forceApplied;
@@ -42,16 +41,36 @@ class Wheel
         {
             $this->speed = (float)$this->speed * (float)$acceleration;
         }
-
-        //echo "Acceleration: $acceleration | Speed2: {$this->speed}\n";
-        $this->distance += self::SPEED_MILE_RATIO * $this->speed;
     }
 
-    public function spinBackward($forceApplied)
+    public function spinForward($forceApplied, $timeDilation = null)
     {
+        if (is_null($timeDilation))
+        {
+            // Set the default time Dilation to one second.
+            $timeDilation = 1/60;
+        }
+
+        //echo "Acceleration: $acceleration | Speed2: {$this->speed}\n";
+        $this->distance += $timeDilation * $this->speed;
+
+        if (DEBUG >= 4)
+        {
+            echo "Dilation: $timeDilation | Speed: " . $this->speed . " | Distance: {$this->distance}\n";
+        }
+    }
+
+    public function spinBackward($forceApplied, $timeDilation = null)
+    {
+        if (is_null($timeDilation))
+        {
+            // Set the default time Dilation to one second.
+            $timeDilation = 1/60;
+        }
+
         // Set the traveling speed (negative for reverse).
         $this->speed = self::FORCE_SPEED_RATIO * $forceApplied;
-        $this->distance -= self::SPEED_MILE_RATIO * $this->speed;
+        $this->distance -= $timeDilation * $this->speed;
     }
 
     public function getSpeed()

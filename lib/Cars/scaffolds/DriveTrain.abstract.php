@@ -42,6 +42,15 @@ abstract class DriveTrain implements SplObserver
         }
     }
     
+    private function deliverThrust()
+    {
+        foreach ($this->wheels as /** @var Wheel **/ $wheel)
+        {
+            $wheel->changeSpinSpeed($this->currentEngineForce);
+            $wheel->spinForward($this->currentEngineForce, 1/2000 /* one iteration per second */);
+        }
+    }
+    
     public function spinWheels()
     {
         // Sanity checks.
@@ -86,7 +95,7 @@ abstract class DriveTrain implements SplObserver
         $directions = $this->convertAngleToDirection($steeringWheelAngle);
 
         // Next, set the wheels' direction.  
-        foreach ($this->wheels as $i => $wheel)
+        foreach ($this->wheels as $i => /** @var Wheel **/ $wheel)
         {
             $wheel->turn($directions[$i]);
         }
@@ -95,7 +104,7 @@ abstract class DriveTrain implements SplObserver
     public function getDistanceTravelled()
     {
         $distance = 0.0;
-        foreach ($this->wheels as $wheel)
+        foreach ($this->wheels as /** @var Wheel **/ $wheel)
         {
             $distance += $wheel->getDistanceTravelled();
         }
@@ -107,7 +116,7 @@ abstract class DriveTrain implements SplObserver
     public function getSpeed()
     {
         $speed = 0.0;
-        foreach ($this->wheels as $wheel)
+        foreach ($this->wheels as /** @var Wheel **/ $wheel)
         {
             $speed += $wheel->getSpeed();
         }
@@ -138,7 +147,8 @@ abstract class DriveTrain implements SplObserver
             if ($subject->official_notice['notice'] == CombustionEngine::STATUS_ENGINE_REVS)
             {
                 $this->currentEngineForce = $subject->official_notice['value'];
-                $this->spinWheels();
+                //$this->spinWheels();
+                $this->deliverThrust();
             }
         }
     }
