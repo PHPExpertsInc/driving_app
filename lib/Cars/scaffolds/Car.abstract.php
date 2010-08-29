@@ -15,11 +15,6 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-class CarException extends Exception
-{
-    const ERROR_INAPPROPRIATE_GEAR = 'The appropriate gear for this action is not set.';
-}
-
 abstract class Car extends CarPartSubject implements Automobile
 {
     const STATE_POWERED_OFF = 0;
@@ -84,7 +79,10 @@ abstract class Car extends CarPartSubject implements Automobile
         $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
         // Functional equivalent of running $this->notify();
-        attemptAction(get_class($this), array('turn off the car', 'turned off the car'), array($this, 'notify'), array($this->currentGear - 1));
+        attemptAction(get_class($this), 
+                      array('turn off the car', 'turned off the car'), 
+                      array($this, 'notify'), 
+                      array($this->currentGear - 1));
     }
 
     // Right now our car will only be able to drive in a straight line
@@ -92,12 +90,13 @@ abstract class Car extends CarPartSubject implements Automobile
     public function drive($footPressure, $minutesToDrive, $steeringWheelAngle)
     {
         // Sanity checks.
-        if ($this->currentGear != GearShaft::GEAR_DRIVE || $this->currentGear != GearShaft::GEAR_REVERSE)
-        {
-            throw new CarException(CarException::ERROR_INAPPROPRIATE_GEAR);
-        }
-
-        if ($this->gasTank->getFuelRemaining() != 0)
+        // Functional equivalent of running $this->gearShaft->ensureDrivableState();
+        attemptAction(get_class($this), 
+                      array('ensure a valid gear is set', 'ensured a valid gear is set'), 
+                      array($this->gearShaft, 'ensureDrivableState'));
+        
+        
+        if ($this->gasTank->getFuelRemaining() == 0)
         {
             throw new GasTankException(GasTankException::ERROR_OUT_OF_GAS);
         }

@@ -86,7 +86,7 @@ abstract class DriveTrain implements SplObserver
         // Return average speed for all.
         return $speed / count($this->wheels);
     }
-
+    
     /* For observer pattern */
     // This gets called whenever the engine's state changes.
     public function update(SplSubject $subject)

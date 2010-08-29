@@ -21,6 +21,7 @@ class GearShaftException extends Exception
     const ERROR_MUST_PARK_ON = 'Must be in park to turn on the car.';
     const ERROR_MUST_PARK_REVERSE = 'Must be in park to go into reverse.';
     const ERROR_MUST_PARK_DRIVE = 'Must in park to go forward.';
+    const ERROR_INAPPROPRIATE_GEAR = 'The appropriate gear for this action is not set; the car cannot move.';
 
     const NOTICE_MIN_GEAR = 'Cannot shift higher';
     const NOTICE_MAX_GEAR = 'Cannot shift lower.';
@@ -77,6 +78,15 @@ class GearShaft extends CarPartSubject implements SplObserver
         $this->notify();
 
         return $this->currentGear;
+    }
+
+    public function ensureDrivableState()
+    {
+        if ($this->currentGear != GearShaft::GEAR_DRIVE || $this->currentGear != GearShaft::GEAR_REVERSE)
+        {
+            throw new GearShaftException(GearShaftException::ERROR_INAPPROPRIATE_GEAR);
+        }
+
     }
 
     /* For observer pattern */
