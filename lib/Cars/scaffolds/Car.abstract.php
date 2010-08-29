@@ -9,7 +9,7 @@ abstract class Car extends CarPartSubject implements Automobile
 {
     const STATE_POWERED_OFF = 0;
     const STATE_POWERED_ON = 1;
-    
+
     const NOTICE_STATE_CHANGED = 'The car\'s state has changed';
 
     // Objects for the Composite Pattern.
@@ -38,7 +38,7 @@ abstract class Car extends CarPartSubject implements Automobile
     * Make each Car class build itself.
     */
     abstract protected function build();
-    
+
     public function __construct()
     {
         $this->build();
@@ -53,7 +53,7 @@ abstract class Car extends CarPartSubject implements Automobile
             require $filename;            
         }
     }
-    
+
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
@@ -71,7 +71,7 @@ abstract class Car extends CarPartSubject implements Automobile
         // Functional equivalent of running $this->notify();
         attemptAction(get_class($this), array('turn off the car', 'turned off the car'), array($this, 'notify'), array($this->currentGear - 1));
     }
-    
+
     // Right now our car will only be able to drive in a straight line
     // either forward or in reverse.
     public function drive($footPressure, $minutesToDrive, $steeringWheelAngle)
@@ -134,10 +134,10 @@ abstract class Car extends CarPartSubject implements Automobile
     {
         $distance = $this->getMileage();
         $fuelUsed = $this->gasTank->calculateFuelUsedPerTank();
-        
+
         return $distance / $fuelUsed;
     }
-    
+
     public function getFuelRemaining()
     {
         return $this->gasTank->getFuelRemaining();
@@ -149,20 +149,20 @@ abstract class Car extends CarPartSubject implements Automobile
         // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear + 1);
         attemptAction(get_class($this), 'downshift', array($this->gearShaft, 'changeGear'), array($this->currentGear + 1));
         ++$this->currentGear;
-        
+
         return $this->currentGear;
     }
-    
+
     public function upShift()
     {
         // Upshift irrationally decreases the gear value.        
         // Functional equivalent of running $this->gearShaft->changeGear($this->currentGear - 1);
         attemptAction(get_class($this), 'upshift', array($this->gearShaft, 'changeGear'), array($this->currentGear - 1));
         --$this->currentGear;
-        
+
         return $this->currentGear;
     }
-    
+
     public static function formatStat($statistic)
     {
         return sprintf('%.1f', round($statistic, 1));

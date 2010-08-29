@@ -52,7 +52,7 @@ class GasTank
     {
         return (float)$this->fuel;
     }
-    
+
     public function calculateFuelUsedPerTank()
     {
         return (float)$this->tankSize - (float)$this->fuel;

@@ -60,7 +60,7 @@ class GearShaft extends CarPartSubject implements SplObserver
         $this->official_notice = array('notice' => self::STATUS_GEAR_CHANGED,
                                        'value' => $gear);
         $this->notify();
-        
+
         return $this->currentGear;
     }
 

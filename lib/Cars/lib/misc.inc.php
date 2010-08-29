@@ -18,7 +18,7 @@ function attemptAction($class, $action, $actor, $args = null)
     {
         echo  "$class: Trying to {$present_action}.\n";
     }
-    
+
     // Downshift irrationally increases the gear value.
     try
     {

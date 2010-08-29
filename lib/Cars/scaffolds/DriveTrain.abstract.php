@@ -59,7 +59,7 @@ abstract class DriveTrain implements SplObserver
         // Return average speed for all.
         return $distance / count($this->wheels);        
     }
-    
+
     public function getSpeed()
     {
         $speed = 0.0;
