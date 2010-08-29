@@ -202,6 +202,6 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public static function formatStat($statistic)
     {
-        return sprintf('%.1f', round($statistic, 1));
+        return sprintf('%.2f', round($statistic, 2));
     }
 }
