@@ -18,6 +18,6 @@
 class HondaHybridEngineStats extends EngineStats
 {
     protected $PRESSURE_FORCE_RATIO = 0.21;
-    protected $FORCE_FUEL_RATIO = 0.08;    
+    protected $FORCE_FUEL_RATIO = 0.10;    
 }
 

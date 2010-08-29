@@ -18,6 +18,6 @@
 class FordCombustionEngineStats extends EngineStats
 {
     protected $PRESSURE_FORCE_RATIO = 0.21;
-    protected $FORCE_FUEL_RATIO = 0.17;    
+    protected $FORCE_FUEL_RATIO = 0.22;    
 }
 
