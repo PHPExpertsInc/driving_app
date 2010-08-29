@@ -41,7 +41,7 @@ abstract class Car extends CarPartSubject implements Automobile
     */
     protected $gasTank;
     /**
-    * @var GearShift
+    * @var GearShaft
     */
     protected $gearShaft;
 
