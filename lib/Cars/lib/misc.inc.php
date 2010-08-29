@@ -94,7 +94,7 @@ function filter_files_by_type(&$files, $type)
     $count = count($files);
     for ($a = 0; $a < $count; ++$a)
     {
-        if (strpos($files[$a], ".$type.php") === false)
+        if (preg_match("/\.$type\.php\$/", $files[$a]) === 0)
         {
             // Kill the item.
             unset($files[$a]);
