@@ -58,7 +58,7 @@ abstract class Car extends CarPartSubject implements Automobile
     {
         if (($pos = strpos($className, "Car")) !== false)
         {
-            $filename = CARS_LIB_PATH . "/" . substr($className, 0, $pos) . ".car.php";
+            $filename = CARS_LIB_PATH . "/cars/" . substr($className, 0, $pos) . ".car.php";
 
             require $filename;            
         }
