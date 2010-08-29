@@ -96,8 +96,7 @@ function autoload_car_classes($className)
     // Declare the types of classes this project has.
     $classTypes = array('interface' => CARS_LIB_PATH . '/interfaces', 
                         'abstract'  => CARS_LIB_PATH . '/scaffolds', 
-                        'part'      => CARS_LIB_PATH . '/parts', 
-                        'car'       => CARS_LIB_PATH);
+                        'part'      => CARS_LIB_PATH . '/parts');
 
     // Cache classes.
     if (is_null($classes))
@@ -119,10 +118,9 @@ function autoload_car_classes($className)
         }
     }
 
-    if (!isset($classes[$className]))
+    if (isset($classes[$className]))
     {
-        throw new ErrorException('Could not autoload class ' . $className);
+        require $classes[$className];
     }
 //    echo $classes[$className]; exit;
-    require $classes[$className];
 }
