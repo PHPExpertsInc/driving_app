@@ -39,6 +39,21 @@ abstract class DriveTrain implements SplObserver
             $this->wheels[] = $wheel;
         }
     }
+    
+    private function spinWheels($forceApplied)
+    {
+        foreach ($this->wheels as /** @var Wheel **/ $wheel)
+        {
+            if ($this->currentGear == GearShaft::GEAR_DRIVE)
+            {
+                $wheel->spinForward($forceApplied);
+            }
+            else if ($this->currentGear == GearShaft::GEAR_REVERSE)
+            {
+                $wheel->spinBackward($forceApplied);
+            }
+        }
+    }
 
     private function convertAngleToDirection($steeringWheelAngle)
     {
