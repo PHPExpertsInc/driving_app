@@ -22,15 +22,18 @@ require 'lib/Cars/Cars.php';
 $car = new HondaInsightCar;
 
 // Attempt to change gears when off.
-$car->downShift();   // Expect "BZZZ: Car must be on to change gears." and "HondaInsightCar: Unsuccessfully downshifted."
+$car->downShift();   // Expect "BZZZ: Car must be on to change gears."
+                     //        "HondaInsightCar: Unsuccessfully downshifted."
 $car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car."
 $car->downShift();   // Expect "HondaInsightCar: Successfully downshifted."
 $car->turnOff();     // Expect "HondaInsightCar: Successfully turned off the car."
 
-$car->turnOn();      // Expect "BZZZ: Must be in park to turn on the car." and "HondaInsightCar: Unsuccessfully turned on the car."
+$car->turnOn();      // Expect "BZZZ: Must be in park to turn on the car."
+                     //        "HondaInsightCar: Unsuccessfully turned on the car."
 
 // Get into park.
-while ($car->upShift() != GearShaft::GEAR_PARK);  // Expect 2x "HondaInsightCar: Successfully upshifted."
+// Expect 2x "HondaInsightCar: Successfully upshifted."
+while ($car->upShift() != GearShaft::GEAR_PARK);
 
 $car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car."
 $car->turnOff();     // Expect "HondaInsightCar: Successfully turned off the car."
@@ -42,10 +45,13 @@ $car->refuel();      // Expect "HondaInsightCar: Successfully refueled by max ga
 echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 10.0 gallons."
 $car->refuel(0.5);   // Expect "Inform the clerk that 0.50 gallons needs to be refunded."
 
-
-
-exit;
 // 0 degrees == straight ahead.
-$car->drive(1.0, 5.2, 0.0);
-echo "Miles driven: " . Car::formatStat($car->calculateMileage()) . " miles.\n";
+// Expect "BZZZ: The appropriate gear for this action is not set; the car cannot move."
+//        "HondaInsightCar: Unsuccessfully ensured a valid gear is set."
+$car->drive(1.0, 5.2, 0.0);  
+
+// Expect "Miles driven: 0.0 miles."
+echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
+
+// Expect "Current mileage: 0.0 mpg."
 echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg.\n";
