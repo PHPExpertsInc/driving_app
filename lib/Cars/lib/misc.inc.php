@@ -37,6 +37,7 @@ function attemptAction($class, $action, $actor, $args = null)
     // Downshift irrationally increases the gear value.
     try
     {
+        $args = (!is_null($args)) ? $args : array();
         call_user_func_array($actor, $args);
         $status = "Successfully";
     }
