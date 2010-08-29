@@ -19,7 +19,8 @@ define('ENVIRONMENT', 'dev');
 
 require 'lib/Cars/Cars.php';
 
-$car = new HondaInsightCar;
+// Use the abstract factory pattern.
+$car = CarFactory::loadCar('Honda', 'Insight');
 
 // Attempt to change gears when off.
 $car->downShift();   // Expect "BZZZ: Car must be on to change gears."

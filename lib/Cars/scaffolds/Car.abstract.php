@@ -205,3 +205,66 @@ abstract class Car extends CarPartSubject implements Automobile
         return sprintf('%.2f', round($statistic, 2));
     }
 }
+
+// Abstract Factory Pattern
+class CarFactory
+{
+    private function __construct() { }
+
+    private static function findCars()
+    {
+        static $cars = null;
+
+        // Cache the cars.
+        if (is_null($cars))
+        {
+            // Find all the files for these class types.
+            $cars = array();
+            $type = 'car';
+            $directory = CARS_LIB_PATH . '/cars';
+
+            $files = scandir($directory);
+            filter_files_by_type($files, $type);
+
+            foreach ($files as $file)
+            {
+                if (($pos = strpos($file, ".$type.php")) !== false)
+                {
+                    $class = substr($file, 0, $pos);
+                    $cars[] = $class;
+                }
+                else
+                {
+                    echo "Great: $file\n";
+                }
+            }
+        }
+
+        return $cars;
+    }
+
+    /**
+    * @param string $model
+    * @return Car
+    */
+    public static function loadCar($make, $model)
+    {
+        // Sanity checks.
+        if (!is_string($model))
+        {
+            trigger_error('Invalid model type.', E_USER_ERROR);
+        }
+
+        $available_cars = self::findCars();
+        $className = $make . $model;
+
+        if (!in_array($className, $available_cars))
+        {
+            trigger_error('Could not find car object for ' . $className . '.', E_USER_ERROR);
+        }
+
+        $className .= 'Car';
+
+        return new $className;
+    }
+}
