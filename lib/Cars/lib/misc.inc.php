@@ -15,7 +15,7 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-function attemptAction($class, $action, $actor, $args = null)
+function attemptAction($class, $action, $actor, array $args = null)
 {
     $status = "Unsuccessfully";
     if (is_array($action))
