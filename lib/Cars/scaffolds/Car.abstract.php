@@ -68,7 +68,7 @@ abstract class Car extends CarPartSubject implements Automobile
             require $filename;            
         }
     }
-
+    
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
@@ -147,8 +147,16 @@ abstract class Car extends CarPartSubject implements Automobile
 
     public function calculateFuelEfficiency()
     {
-        $distance = $this->getMileage();
         $fuelUsed = $this->gasTank->calculateFuelUsedPerTank();
+
+        // Sanity checks.
+        // Prevent divide by zero.
+        if ($fuelUsed == 0)
+        {
+            return 'NaN';
+        }
+
+        $distance = $this->getMileage();
 
         return $distance / $fuelUsed;
     }
