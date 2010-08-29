@@ -46,6 +46,9 @@ class HondaInsightCar extends Car implements Automobile
         $this->attach($this->gearShaft);
 
         // Register CarDriveTrain as an observer of GearShaft.
-        $this->gearShaft->attach($this->drivetrain);        
+        $this->gearShaft->attach($this->drivetrain); 
+        
+        // Register CarDriveTrain as an observer of Engine.
+        $this->engine->attach($this->drivetrain);
     }
 }

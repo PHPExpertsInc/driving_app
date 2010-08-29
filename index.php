@@ -48,7 +48,7 @@ $car->refuel(0.5);   // Expect "Inform the clerk that 0.50 gallons needs to be r
 // 0 degrees == straight ahead.
 // Expect "BZZZ: The appropriate gear for this action is not set; the car cannot move."
 //        "HondaInsightCar: Unsuccessfully ensured a valid gear is set."
-$car->drive(1.0, 5.2, 0.0);  
+$car->drive(5.2, 0.0);
 
 // Expect "Miles driven: 0.0 miles."
 echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
@@ -62,11 +62,14 @@ $car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car.
 // Expect 3x "HondaInsightCar: Successfully downshifted."
 while ($car->downShift() != GearShaft::GEAR_DRIVE);
 
-$car->drive(1.0, 5.2, 0.0);  
+// Accelerate to 60 mph.
+$car->accelerate(1.0, 10);
+//$car->drive(1.0, 10.2, 0.0);  
 echo "Current speed: " . Car::formatStat($car->getSpeed()) . " mph.\n";
 
 // Expect "Miles driven: 0.0 miles."
 echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
+echo "Fuel remaining: " . Car::formatStat($car->getFuelRemaining()) . " gallons.\n";   // Expect "Fuel remaining: 10.0 gallons."
 
 // Expect "Current mileage: 0.0 mpg."
 echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " mpg.\n";

@@ -19,7 +19,8 @@ interface Automobile
 {
     public function turnOn();
     public function turnOff();
-    public function drive($footPressure, $minutesToDrive, $steeringWheelAngle);
+    public function accelerate($footPressure, $secondsToAccelerate);
+    public function drive($minutesToDrive, $steeringWheelAngle);
     public function brake($footPressure);
     public function refuel();
     public function getMileage();

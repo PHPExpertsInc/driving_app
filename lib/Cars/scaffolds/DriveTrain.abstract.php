@@ -19,13 +19,15 @@ class DriveTrainException extends Exception
 {
     const ERROR_INVALID_WHEEL_NUMBER = 'Invalid wheel number.';
     const ERROR_INVALID_WHEEL_OBJECT = 'Invalid wheel object.';
-    const ERROR_NOT_IMPLEMENTED_YET = 'Feature has not been implemented yet';
+    const ERROR_NOT_IMPLEMENTED_YET = 'Feature has not been implemented yet.';
+    const ERROR_NO_FORCE_APPLIED = 'No force applied.';
 }
 
 abstract class DriveTrain implements SplObserver
 {
     protected $wheels;
     protected $currentGear = GearShaft::GEAR_PARK;
+    protected $currentEngineForce = 0;
 
     public function __construct(array $wheels)
     {
@@ -40,17 +42,29 @@ abstract class DriveTrain implements SplObserver
         }
     }
     
-    private function spinWheels($forceApplied)
+    public function spinWheels()
     {
+        // Sanity checks.
+        if (!is_numeric($this->currentEngineForce))
+        {
+            trigger_error('Invalid currentEngineForce', E_USER_ERROR);
+        }
+
+        if ($this->currentEngineForce == 0)
+        {
+            // FIXME: Temp hack.
+            //throw new DriveTrainException(DriveTrainException::ERROR_NO_FORCE_APPLIED);
+        }
+
         foreach ($this->wheels as /** @var Wheel **/ $wheel)
         {
             if ($this->currentGear == GearShaft::GEAR_DRIVE)
             {
-                $wheel->spinForward($forceApplied);
+                $wheel->spinForward($this->currentEngineForce);
             }
             else if ($this->currentGear == GearShaft::GEAR_REVERSE)
             {
-                $wheel->spinBackward($forceApplied);
+                $wheel->spinBackward($this->currentEngineForce);
             }
         }
     }
@@ -59,7 +73,7 @@ abstract class DriveTrain implements SplObserver
     {
         if ($steeringWheelAngle != 0.0)
         {
-            throw new DriveTrainException(self::ERROR_NOT_IMPLEMENTED_YET);
+            throw new DriveTrainException(DriveTrainException::ERROR_NOT_IMPLEMENTED_YET);
         }
 
         // Since all we can do is drive straight, we simply set them to all 0.0 angles.
@@ -117,6 +131,14 @@ abstract class DriveTrain implements SplObserver
                 }
 
                 $this->currentGear = $subject->official_notice['value'];
+            }
+        }
+        else if ($subject instanceof CombustionEngine)
+        {
+            if ($subject->official_notice['notice'] == CombustionEngine::STATUS_ENGINE_REVS)
+            {
+                $this->currentEngineForce = $subject->official_notice['value'];
+                $this->spinWheels();
             }
         }
     }

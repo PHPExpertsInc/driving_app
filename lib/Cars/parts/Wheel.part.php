@@ -17,7 +17,7 @@
 
 class Wheel
 {
-    const FORCE_SPEED_RATIO = 0.08;
+    const FORCE_SPEED_RATIO = 7.18;
     const SPEED_MILE_RATIO = 0.005;
 
     private $speed;
@@ -32,7 +32,18 @@ class Wheel
     public function spinForward($forceApplied)
     {
         // Set the traveling speed.
-        $this->speed = self::FORCE_SPEED_RATIO * $forceApplied;
+        $acceleration = self::FORCE_SPEED_RATIO * $forceApplied;
+        
+        if ($this->speed == 0)
+        {
+            $this->speed = $acceleration;
+        }
+        else
+        {
+            $this->speed = (float)$this->speed * (float)$acceleration;
+        }
+
+        //echo "Acceleration: $acceleration | Speed2: {$this->speed}\n";
         $this->distance += self::SPEED_MILE_RATIO * $this->speed;
     }
 

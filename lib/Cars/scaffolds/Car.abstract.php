@@ -87,7 +87,7 @@ abstract class Car extends CarPartSubject implements Automobile
 
     // Right now our car will only be able to drive in a straight line
     // either forward or in reverse.
-    public function drive($footPressure, $minutesToDrive, $steeringWheelAngle)
+    public function accelerate($footPressure, $secondsToAccelerate)
     {
         // Sanity checks.
         // Functional equivalent of running $this->gearShaft->ensureDrivableState();
@@ -96,17 +96,27 @@ abstract class Car extends CarPartSubject implements Automobile
                       array($this->gearShaft, 'ensureDrivableState'));
         
         
-        if ($this->gasTank->getFuelRemaining() == 0)
+        // Use a loop; one second == one iteration.
+        for ($a = 0; $a < $secondsToAccelerate; ++$a)
         {
-            throw new GasTankException(GasTankException::ERROR_OUT_OF_GAS);
+            $this->engine->revUp($footPressure);
         }
+    }
+
+    public function drive($minutesToDrive, $steeringWheelAngle)
+    {
+        // Sanity checks.
+        // Functional equivalent of running $this->gearShaft->ensureDrivableState();
+        attemptAction(get_class($this), 
+                      array('ensure a valid gear is set', 'ensured a valid gear is set'), 
+                      array($this->gearShaft, 'ensureDrivableState'));
 
         $this->drivetrain->turn($steeringWheelAngle);
 
         // Use a loop; one minute == one iteration.
         for ($a = 0; $a < $minutesToDrive; ++$a)
         {
-            $this->engine->revUp($footPressure);
+            $this->drivetrain->spinWheels();
         }
     }
 
