@@ -63,6 +63,7 @@ $car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car.
 while ($car->downShift() != GearShaft::GEAR_DRIVE);
 
 $car->drive(1.0, 5.2, 0.0);  
+echo "Current speed: " . Car::formatStat($car->getSpeed()) . " mph.\n";
 
 // Expect "Miles driven: 0.0 miles."
 echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";

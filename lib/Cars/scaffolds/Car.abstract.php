@@ -185,6 +185,11 @@ abstract class Car extends CarPartSubject implements Automobile
         return $this->currentGear;
     }
 
+    public function getSpeed()
+    {
+        return $this->drivetrain->getSpeed();
+    }
+
     public static function formatStat($statistic)
     {
         return sprintf('%.1f', round($statistic, 1));
