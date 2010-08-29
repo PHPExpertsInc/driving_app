@@ -82,11 +82,10 @@ class GearShaft extends CarPartSubject implements SplObserver
 
     public function ensureDrivableState()
     {
-        if ($this->currentGear != GearShaft::GEAR_DRIVE || $this->currentGear != GearShaft::GEAR_REVERSE)
+        if ($this->currentGear != GearShaft::GEAR_DRIVE && $this->currentGear != GearShaft::GEAR_REVERSE)
         {
             throw new GearShaftException(GearShaftException::ERROR_INAPPROPRIATE_GEAR);
         }
-
     }
 
     /* For observer pattern */
