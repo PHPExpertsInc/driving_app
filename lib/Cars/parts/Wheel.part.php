@@ -33,14 +33,14 @@ class Wheel
     {
         // Set the traveling speed.
         $this->speed = self::FORCE_SPEED_RATIO * $forceApplied;
-        $this->distance += SPEED_MILE_RATIO * $this->speed;
+        $this->distance += self::SPEED_MILE_RATIO * $this->speed;
     }
 
     public function spinBackward($forceApplied)
     {
         // Set the traveling speed (negative for reverse).
         $this->speed = self::FORCE_SPEED_RATIO * $forceApplied;
-        $this->distance -= SPEED_MILE_RATIO * $this->speed;
+        $this->distance -= self::SPEED_MILE_RATIO * $this->speed;
     }
 
     public function getSpeed()
