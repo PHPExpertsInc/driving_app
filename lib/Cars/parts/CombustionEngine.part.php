@@ -23,8 +23,6 @@ class CombustionEngine extends CarPartSubject implements Engine
 
     private $gasTank;
     
-    public $official_notice;
-
     /* Engines are tightly coupled **in principle** with gas tanks.  Neither is any good at anything without the other.
        That is why we are tightly coupling them here in the logic.
     */
@@ -43,7 +41,7 @@ class CombustionEngine extends CarPartSubject implements Engine
     {
         $force = $footPressure * self::PRESSURE_FORCE_RATIO;
 
-        $this->official_notice = array('notice' => self::STATUS_ENGINE_REVS,
+        $this->ro_official_notice = array('notice' => self::STATUS_ENGINE_REVS,
                                        'value'  => $force);
 
         $this->notify();

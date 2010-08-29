@@ -20,7 +20,19 @@ abstract class CarPartSubject implements SplSubject
     protected $observers = null;
 
     // This is the message we wish to relay to the observers.
-    public $official_notice;
+    protected $ro_official_notice;
+
+    // Make read-only properties available.
+    public function __get($name)
+    {
+        // See if a read-only property exists...
+        $propertyName = "ro_$name";
+        if (property_exists($this, $propertyName))
+        {
+            return $this->$propertyName;
+        }
+    }
+
 
     /* For observer pattern */
     public function attach(SplObserver $observer)

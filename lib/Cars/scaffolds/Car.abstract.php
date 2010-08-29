@@ -67,7 +67,7 @@ abstract class Car extends CarPartSubject implements Automobile
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
-        $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
+        $this->ro_official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
         // Functional equivalent of running $this->notify();
         attemptAction(get_class($this), array('turn on the car', 'turned on the car'), array($this, 'notify'), array($this->currentGear - 1));
@@ -76,7 +76,7 @@ abstract class Car extends CarPartSubject implements Automobile
     public function turnOff()
     {
         $this->state = self::STATE_POWERED_OFF;
-        $this->official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
+        $this->ro_official_notice = array('notice' => self::NOTICE_STATE_CHANGED,
                                        'value' => $this->state);
         // Functional equivalent of running $this->notify();
         attemptAction(get_class($this), 
