@@ -25,9 +25,12 @@ class HondaInsightCar extends Car implements Automobile
     {
         // Add a gas tank.
         $this->gasTank = new GasTank(10.0);
+        
+        // Get the HybridEngine's stats.
+        $engineStats = new HondaHybridEngineStats;
 
         // Add an engine.
-        $this->engine = new HybridEngine($this->gasTank);
+        $this->engine = new HybridEngine($engineStats, $this->gasTank);
 
         // Add a GearShaft.
         $this->gearShaft = new GearShaft;

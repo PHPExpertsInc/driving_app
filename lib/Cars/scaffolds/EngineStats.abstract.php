@@ -15,10 +15,14 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-interface Engine
+abstract class EngineStats
 {
-    public function __construct(EngineStats $engineStats, GasTank $gasTank);
-    public function rev();
-    public function revUp($footPressure);
-    public function revDown($footPressure);   
+    protected $PRESSURE_FORCE_RATIO;
+    protected $FORCE_FUEL_RATIO;
+
+    final function __get($member)
+    {
+        return $this->$member;
+    }
 }
+

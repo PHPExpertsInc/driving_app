@@ -112,7 +112,8 @@ function autoload_car_classes($className)
     // Declare the types of classes this project has.
     $classTypes = array('interface' => CARS_LIB_PATH . '/interfaces', 
                         'abstract'  => CARS_LIB_PATH . '/scaffolds', 
-                        'part'      => CARS_LIB_PATH . '/parts');
+                        'part'      => CARS_LIB_PATH . '/parts',
+                        'stats'     => CARS_LIB_PATH . '/models');
 
     // Cache classes.
     if (is_null($classes))

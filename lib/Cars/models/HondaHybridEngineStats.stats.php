@@ -15,10 +15,9 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-interface Engine
+class HondaHybridEngineStats extends EngineStats
 {
-    public function __construct(EngineStats $engineStats, GasTank $gasTank);
-    public function rev();
-    public function revUp($footPressure);
-    public function revDown($footPressure);   
+    protected $PRESSURE_FORCE_RATIO = 0.21;
+    protected $FORCE_FUEL_RATIO = 0.08;    
 }
+
