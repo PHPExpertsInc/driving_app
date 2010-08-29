@@ -64,8 +64,11 @@ while ($car->downShift() != GearShaft::GEAR_DRIVE);
 
 // Accelerate to 60 mph.
 $car->accelerate(1.0, 10);
-//$car->drive(1.0, 10.2, 0.0);  
 echo "Current speed: " . Car::formatStat($car->getSpeed()) . " mph.\n";
+echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
+
+// Drive for 60 minutes.
+$car->drive(60, 0.0);
 
 // Expect "Miles driven: 0.0 miles."
 echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
