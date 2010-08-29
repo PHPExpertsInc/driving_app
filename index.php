@@ -90,3 +90,43 @@ echo "Current mileage: " . Car::formatStat($car->calculateFuelEfficiency()) . " 
 // Expect 3x "HondaInsightCar: Successfully upshifted."
 while ($car->upShift() != GearShaft::GEAR_PARK);
 $car->turnOff();      // Expect "HondaInsightCar: Successfully turned off the car."
+
+echo "Refueling...\n";
+$car->refuel();
+
+$car->turnOn();
+
+// Get into drive.
+// Expect 3x "HondaInsightCar: Successfully downshifted."
+while ($car->downShift() != GearShaft::GEAR_DRIVE);
+
+echo "Accelerating to 60 mph...\n";
+// Accelerate to 60 mph.
+$seconds = 0;
+while ($car->getSpeed() < 60)
+{
+    $car->accelerate(1.0, 1);
+    ++$seconds;
+}
+
+echo "Driving until the car runs out of fuel...\n";
+try
+{
+    while (true)
+    {
+        $car->drive(1, 0);
+    }
+}
+catch (GasTankException $e)
+{
+    if ($e->getMessage() != GasTankException::ERROR_OUT_OF_GAS)
+    {
+        // Unexpected error
+        throw $e;
+    }
+}
+
+printf("Max distance on a full tank: %s miles.\n", 
+       Car::formatStat($car->getMileage()));
+printf("Fuel efficiency: %s mpg.\n", 
+       Car::formatStat($car->calculateFuelEfficiency()));
