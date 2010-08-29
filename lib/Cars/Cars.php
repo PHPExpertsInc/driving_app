@@ -2,22 +2,7 @@
 
 require 'lib/misc.inc.php';
 
-
-require 'scaffolds/CarPartSubject.abstract.php';
-require 'interfaces/Engine.interface.php';
-//require 'parts/HybridEngine.part.php';
-//require 'parts/CarDriveTrain.part.php';
-
-
-
-
-
-
-
-
-
-
-
-
+define('CARS_LIB_PATH', dirname(__FILE__));
 
 set_debug_level();
+spl_autoload_register('autoload_car_classes');

@@ -73,3 +73,56 @@ function set_debug_level()
 
     define('DEBUG', $debug_level);
 }
+
+function filter_files_by_type(&$files, $type)
+{
+    $count = count($files);
+    for ($a = 0; $a < $count; ++$a)
+    {
+        if (strpos($files[$a], ".$type.php") === false)
+        {
+            // Kill the item.
+            unset($files[$a]);
+        }
+    }
+
+    sort($files);
+}
+
+function autoload_car_classes($className)
+{
+    static $classes = null;
+
+    // Declare the types of classes this project has.
+    $classTypes = array('interface' => CARS_LIB_PATH . '/interfaces', 
+                        'abstract'  => CARS_LIB_PATH . '/scaffolds', 
+                        'part'      => CARS_LIB_PATH . '/parts', 
+                        'car'       => CARS_LIB_PATH);
+
+    // Cache classes.
+    if (is_null($classes))
+    {
+        // Find all the files for these class types.
+        $classes = array();
+        foreach ($classTypes as $type => $directory)
+        {
+            $files = scandir($directory);
+            filter_files_by_type($files, $type);
+            foreach ($files as $file)
+            {
+                if (($pos = strpos($file, ".$type.php")) !== false)
+                {
+                    $class = substr($file, 0, $pos);
+                    $classes[$class] = $directory . '/' . $file;
+                }
+            }
+        }
+    }
+
+    if (!isset($classes[$className]))
+    {
+        throw new ErrorException('Could not autoload class ' . $className);
+    }
+//    echo $classes[$className]; exit;
+    require $classes[$className];
+}
