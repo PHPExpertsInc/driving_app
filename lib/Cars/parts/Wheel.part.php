@@ -48,7 +48,7 @@ class Wheel
         return $this->speed;
     }
 
-    public function getDistanceTraveled()
+    public function getDistanceTravelled()
     {
         return $this->distance;
     }
