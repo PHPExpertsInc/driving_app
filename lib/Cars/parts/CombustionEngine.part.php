@@ -19,9 +19,13 @@ class CombustionEngine extends CarPartSubject implements Engine
 {
     const PRESSURE_FORCE_RATIO = 0.21;
     const FORCE_FUEL_RATIO = 0.08;
-    const STATUS_ENGINE_REVS = 'Engine revs changed';
+
+    const NOTICE_REVS = 'Engine is running';
+    const NOTICE_REVS_INCREASED = 'Engine revs increased';
+    const NOTICE_REVS_DECREASED = 'Engine revs decreased';
 
     private $gasTank;
+    private $currentForce = 0;
     
     /* Engines are tightly coupled **in principle** with gas tanks.  Neither is any good at anything without the other.
        That is why we are tightly coupling them here in the logic.
@@ -31,24 +35,35 @@ class CombustionEngine extends CarPartSubject implements Engine
         $this->gasTank = $gasTank;
     }
 
-    private function injectFuel($force)
+    private function injectFuel()
     {
-        $gasNeeded = $force * self::FORCE_FUEL_RATIO;
+        $gasNeeded = $this->currentForce * self::FORCE_FUEL_RATIO;
         $this->gasTank->releaseFuel($gasNeeded);
+    }
+
+    public function rev()
+    {
+        $this->injectFuel();
+        $this->ro_official_notice = array('notice' => self::NOTICE_REVS,
+                                          'value'  => $this->currentForce);
+        $this->notify();
     }
 
     public function revUp($footPressure)
     {
-        $force = $footPressure * self::PRESSURE_FORCE_RATIO;
-
-        $this->ro_official_notice = array('notice' => self::STATUS_ENGINE_REVS,
-                                       'value'  => $force);
-
-        $this->notify();
+        $this->currentForce = $footPressure * self::PRESSURE_FORCE_RATIO;
+        $this->injectFuel();
+        $this->ro_official_notice = array('notice' => self::NOTICE_REVS_INCREASED,
+                                          'value'  => $this->currentForce);
+        $this->notify();        
     }
 
     public function revDown($footPressure)
     {
-        $this->revUp($footPressure * -1);
+        $this->currentForce = $footPressure * self::PRESSURE_FORCE_RATIO;
+        $this->injectFuel();
+        $this->ro_official_notice = array('notice' => self::NOTICE_REVS_DECREASED,
+                                          'value'  => $this->currentForce);
+        $this->notify();        
     }
 }

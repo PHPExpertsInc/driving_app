@@ -116,7 +116,7 @@ abstract class Car extends CarPartSubject implements Automobile
         // Use a loop; one minute == one iteration.
         for ($a = 0; $a < $minutesToDrive; ++$a)
         {
-            $this->drivetrain->spinWheels();
+            $this->engine->rev();
         }
     }
 

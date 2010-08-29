@@ -144,11 +144,15 @@ abstract class DriveTrain implements SplObserver
         }
         else if ($subject instanceof CombustionEngine)
         {
-            if ($subject->official_notice['notice'] == CombustionEngine::STATUS_ENGINE_REVS)
+            if ($subject->official_notice['notice'] == CombustionEngine::NOTICE_REVS_INCREASED)
             {
                 $this->currentEngineForce = $subject->official_notice['value'];
-                //$this->spinWheels();
                 $this->deliverThrust();
+            }
+            else if ($subject->official_notice['notice'] == CombustionEngine::NOTICE_REVS)
+            {
+                $this->currentEngineForce = $subject->official_notice['value'];
+                $this->spinWheels();
             }
         }
     }
