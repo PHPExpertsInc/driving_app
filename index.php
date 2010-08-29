@@ -63,8 +63,17 @@ $car->turnOn();      // Expect "HondaInsightCar: Successfully turned on the car.
 while ($car->downShift() != GearShaft::GEAR_DRIVE);
 
 // Accelerate to 60 mph.
-$car->accelerate(1.0, 10);
-echo "Current speed: " . Car::formatStat($car->getSpeed()) . " mph.\n";
+$seconds = 0;
+while ($car->getSpeed() < 60)
+{
+    $car->accelerate(1.0, 1);
+    ++$seconds;
+}
+printf("Accelerated to %s mph in %d seconds.\n",
+       Car::formatStat($car->getSpeed()),
+       $seconds);
+
+//echo "Current speed: " . Car::formatStat($car->getSpeed()) . " mph.\n";
 echo "Miles driven: " . Car::formatStat($car->getMileage()) . " miles.\n";
 
 // Drive for 60 minutes.
