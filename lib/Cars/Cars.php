@@ -17,17 +17,70 @@
 
 require 'lib/misc.inc.php';
 
-define('CARS_LIB_PATH', dirname(__FILE__));
-convert_command_line_to_get();
-
-if (isset($_GET['help']))
+// Singleton pattern
+class Cars
 {
-    show_help();
+    private static $instance = null;
+
+    private function __construct()
+    {
+        ob_start();
+
+        define('CARS_LIB_PATH', dirname(__FILE__));
+        convert_command_line_to_get();
+
+        if (isset($_GET['help']) || !isset($_GET['car']))
+        {
+            show_help();
+        }
+
+        set_debug_level();
+        spl_autoload_register('autoload_car_classes');
+        spl_autoload_register(array('Car', 'autoloader'));
+    }
+
+    public function __destruct()
+    {
+        // Detect if we're seeing this via a web server.
+        if (php_sapi_name() != 'cli' && isset($_SERVER))
+        {
+            // Crazy hack to output either HTML or text based on context.
+            $text = ob_get_clean();
+            $html = $this->convertTextToHTML($text);
+            echo $html;
+        }
+    }
+
+    private function convertTextToHTML($text)
+    {
+        $html = <<<HTML
+<html>
+    <head>
+        <title>Cars</title>
+    </head>
+    <body>
+        <h1>PHP Car App</h1>
+        <p style="white-space: pre">
+            $text
+        </p>
+    </body>
+</html>
+HTML;
+
+        return $html;
+    }
+
+    public static function init()
+    {
+        if (is_null(self::$instance))
+        {
+            self::$instance = new Cars;
+        }
+
+        return self::$instance;
+    }
 }
 
-set_debug_level();
-spl_autoload_register('autoload_car_classes');
-spl_autoload_register(array('Car', 'autoloader'));
 
 /*
                /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
