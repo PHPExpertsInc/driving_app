@@ -63,7 +63,7 @@ abstract class Car extends CarPartSubject implements Automobile
             require $filename;            
         }
     }
-
+    
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
@@ -94,8 +94,8 @@ abstract class Car extends CarPartSubject implements Automobile
         attemptAction(get_class($this), 
                       null, 
                       array($this->gearShaft, 'ensureDrivableState'));
-
-
+        
+        
         // Use a loop; one second == one iteration.
         for ($a = 0; $a < $secondsToAccelerate; ++$a)
         {
@@ -247,16 +247,17 @@ class CarFactory
     * @param string $model
     * @return Car
     */
-    public static function loadCar($make, $model)
+    public static function loadCar($car)
     {
+        echo "Car: $car\n";
         // Sanity checks.
-        if (!is_string($model))
+        if (!is_string($car))
         {
-            trigger_error('Invalid model type.', E_USER_ERROR);
+            trigger_error('Invalid car variable.', E_USER_ERROR);
         }
 
         $available_cars = self::findCars();
-        $className = $make . $model;
+        $className = $car;
 
         if (!in_array($className, $available_cars))
         {

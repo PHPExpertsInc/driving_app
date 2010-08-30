@@ -25,7 +25,7 @@ if (!isset($_GET['car']))
 }
 
 // Use the abstract factory pattern.
-$car = CarFactory::loadCar('Honda', 'Insight');
+$car = CarFactory::loadCar($_GET['car']);
 
 // Attempt to change gears when off.
 $car->downShift();   // Expect "BZZZ: Car must be on to change gears."

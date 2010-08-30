@@ -56,7 +56,7 @@ function convert_command_line_to_get()
 {
     if (php_sapi_name() == 'cli')
     {
-        $_GET = getopt('', array('help', 'debug::'));
+        $_GET = getopt('', array('help', 'car:', 'debug:'));
     }    
 }
 
