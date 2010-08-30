@@ -23,13 +23,13 @@ function attemptAction($class, $action, $actor, $args = null)
         $present_action = $action[0];
         $past_action = $action[1];
     }
-    else
+    else if (is_string($action))
     {
         $present_action = $past_action = $action;
         $past_action .= 'ed';
     }
 
-    if (DEBUG >= 2)
+    if (DEBUG >= 2 && !is_null($action))
     {
         echo  "$class: Trying to {$present_action}.\n";
     }
@@ -46,7 +46,7 @@ function attemptAction($class, $action, $actor, $args = null)
         printf("BZZZ: %s\n", $e->getMessage());
     }
 
-    if (DEBUG >= 1)
+    if (DEBUG >= 1 && !is_null($action))
     {
         echo "$class: $status {$past_action}.\n";
     }

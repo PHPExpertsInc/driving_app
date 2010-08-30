@@ -92,7 +92,7 @@ abstract class Car extends CarPartSubject implements Automobile
         // Sanity checks.
         // Functional equivalent of running $this->gearShaft->ensureDrivableState();
         attemptAction(get_class($this), 
-                      array('ensure a valid gear is set', 'ensured a valid gear is set'), 
+                      null, 
                       array($this->gearShaft, 'ensureDrivableState'));
         
         
@@ -108,7 +108,7 @@ abstract class Car extends CarPartSubject implements Automobile
         // Sanity checks.
         // Functional equivalent of running $this->gearShaft->ensureDrivableState();
         attemptAction(get_class($this), 
-                      array('ensure a valid gear is set', 'ensured a valid gear is set'), 
+                      null, 
                       array($this->gearShaft, 'ensureDrivableState'));
 
         $this->drivetrain->turn($steeringWheelAngle);
