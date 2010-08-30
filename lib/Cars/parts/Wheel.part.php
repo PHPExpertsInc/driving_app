@@ -27,12 +27,12 @@ class Wheel
     {
         $this->direction = $direction;
     }
-    
+
     public function changeSpinSpeed($forceApplied)
     {
         // Set the traveling speed.
         $acceleration = self::FORCE_SPEED_RATIO * $forceApplied;
-        
+
         if ($this->speed == 0)
         {
             $this->speed = $acceleration;

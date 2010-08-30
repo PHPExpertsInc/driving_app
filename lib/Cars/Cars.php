@@ -19,9 +19,11 @@ require 'lib/misc.inc.php';
 
 define('CARS_LIB_PATH', dirname(__FILE__));
 convert_command_line_to_get();
+
 set_debug_level();
 spl_autoload_register('autoload_car_classes');
 spl_autoload_register(array('Car', 'autoloader'));
+
 /*
                /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
               /\/\/  \/  \/  \/  \/  \/  \/  \/\/\

@@ -25,7 +25,7 @@ class FordFusionCar extends Car implements Automobile
     {
         // Add a gas tank.
         $this->gasTank = new GasTank(23.0);
-        
+
         // Get the HybridEngine's stats.
         $engineStats = new FordCombustionEngineStats;
 
@@ -50,7 +50,7 @@ class FordFusionCar extends Car implements Automobile
 
         // Register CarDriveTrain as an observer of GearShaft.
         $this->gearShaft->attach($this->drivetrain); 
-        
+
         // Register CarDriveTrain as an observer of Engine.
         $this->engine->attach($this->drivetrain);
     }

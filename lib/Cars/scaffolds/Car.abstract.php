@@ -63,7 +63,7 @@ abstract class Car extends CarPartSubject implements Automobile
             require $filename;            
         }
     }
-    
+
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
@@ -94,8 +94,8 @@ abstract class Car extends CarPartSubject implements Automobile
         attemptAction(get_class($this), 
                       null, 
                       array($this->gearShaft, 'ensureDrivableState'));
-        
-        
+
+
         // Use a loop; one second == one iteration.
         for ($a = 0; $a < $secondsToAccelerate; ++$a)
         {

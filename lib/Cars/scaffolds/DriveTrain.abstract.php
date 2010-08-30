@@ -41,7 +41,7 @@ abstract class DriveTrain implements SplObserver
             $this->wheels[] = $wheel;
         }
     }
-    
+
     private function deliverThrust()
     {
         foreach ($this->wheels as /** @var Wheel **/ $wheel)
@@ -50,7 +50,7 @@ abstract class DriveTrain implements SplObserver
             $wheel->spinForward($this->currentEngineForce, 1/2000 /* one iteration per second */);
         }
     }
-    
+
     public function spinWheels()
     {
         // Sanity checks.
@@ -124,7 +124,7 @@ abstract class DriveTrain implements SplObserver
         // Return average speed for all.
         return $speed / count($this->wheels);
     }
-    
+
     /* For observer pattern */
     // This gets called whenever the engine's state changes.
     public function update(SplSubject $subject)
