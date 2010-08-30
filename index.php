@@ -19,6 +19,11 @@ define('ENVIRONMENT', 'dev');
 
 require 'lib/Cars/Cars.php';
 
+if (!isset($_GET['car']))
+{
+    show_help();
+}
+
 // Use the abstract factory pattern.
 $car = CarFactory::loadCar('Honda', 'Insight');
 

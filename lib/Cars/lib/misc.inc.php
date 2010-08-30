@@ -56,9 +56,26 @@ function convert_command_line_to_get()
 {
     if (php_sapi_name() == 'cli')
     {
-        $_GET = getopt('', array('debug::'));
-        print_r($_GET);
+        $_GET = getopt('', array('help', 'debug::'));
     }    
+}
+
+function show_help()
+{
+?>
+
+Cars 1.0
+
+Mandatory parameters:
+   --car=MAKEMODEL   set the car model MakeModel
+
+Optional parameters:
+   --help            show this help screen
+   --debug=LEVEL     set the debug level
+
+
+<?php
+    exit;
 }
 
 function set_debug_level()
