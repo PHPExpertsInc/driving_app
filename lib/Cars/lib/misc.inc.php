@@ -73,8 +73,18 @@ Optional parameters:
    --help            show this help screen
    --debug=LEVEL     set the debug level
 
+<?php
+	if (php_sapi_name() != 'cli' && isset($_SERVER))
+	{
+?>
+Example: 
+<ul>
+	<li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']; ?>?car=HondaInsight&amp;debug=3">Honda Insight (very verbose)</a></li>
+	<li><a href="http://<?php echo $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME']; ?>?car=FordFusion&amp;debug=1">Ford Fusion (verbose)</a></li>
+
 
 <?php
+	}
     exit;
 }
 
