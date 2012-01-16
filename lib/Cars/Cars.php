@@ -53,7 +53,6 @@ class Cars
 
     private function convertTextToHTML($text)
     {
-        $escapedText = htmlentities($text, ENT_QUOTES, "UTF-8");
         $html = <<<HTML
 <html>
     <head>
@@ -63,7 +62,7 @@ class Cars
     <body>
         <h1>PHP Car App</h1>
         <p style="white-space: pre">
-            $escapedText
+            $text
         </p>
     </body>
 </html>
