@@ -15,14 +15,9 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-abstract class EngineStats
+class EngineStats
 {
-    protected $PRESSURE_FORCE_RATIO;
-    protected $FORCE_FUEL_RATIO;
-
-    final function __get($member)
-    {
-        return $this->$member;
-    }
+    public $PRESSURE_FORCE_RATIO;
+    public $FORCE_FUEL_RATIO;
 }
 

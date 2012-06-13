@@ -17,6 +17,8 @@
 
 interface Automobile
 {
+	public function __construct(Engine $engine, GasTank $gasTank, GearShaft $gearShaft, DriveTrain $driveTrain);
+
     public function turnOn();
     public function turnOff();
     public function accelerate($footPressure, $secondsToAccelerate);
@@ -28,4 +30,13 @@ interface Automobile
     public function getFuelRemaining();
     public function downShift();
     public function upShift();
+}
+
+class AutomobileStats
+{
+	public $gasTankSize;
+	public $numberOfWheels;
+
+	/** @var EngineStats **/
+	public $engineStats;
 }

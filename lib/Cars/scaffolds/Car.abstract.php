@@ -23,37 +23,26 @@ abstract class Car extends CarPartSubject implements Automobile
     const NOTICE_STATE_CHANGED = 'The car\'s state has changed';
 
     // Objects for the Composite Pattern.
-    /**
-    * @var Engine
-    */
+    /* @var AutomobileStats */
+    protected static $carStats;
+
+    /** @var Engine */
     protected $engine;
-    /**
-    * @var CarDriveTrain
-    */
+
+    /** @var CarDriveTrain */
     protected $drivetrain;
-    /**
-    * @var GasTank
-    */
+
+    /** @var GasTank */
     protected $gasTank;
-    /**
-    * @var GearShaft
-    */
+
+    /** @var GearShaft */
     protected $gearShaft;
 
     // Class properties.
     protected $state;
     protected $currentGear;
 
-    /**
-    * Make each Car class build itself.
-    */
-    abstract protected function build();
-
-    public function __construct()
-    {
-        $this->build();
-    }
-
+	// TODO: This almost certainly needs to be moved to the main library autoload class.
     public static function autoloader($className)
     {
         if (($pos = strpos($className, "Car")) !== false)
@@ -63,7 +52,15 @@ abstract class Car extends CarPartSubject implements Automobile
             require $filename;            
         }
     }
-    
+
+	public function __construct(Engine $engine, GasTank $gasTank, GearShaft $gearShaft, DriveTrain $driveTrain)
+	{
+		$this->engine     = $engine;
+		$this->gasTank    = $gasTank;
+		$this->gearShaft  = $gearShaft;
+		$this->drivetrain = $driveTrain;
+	}
+
     public function turnOn()
     {
         $this->state = self::STATE_POWERED_ON;
@@ -243,6 +240,7 @@ class CarFactory
         return $cars;
     }
 
+
     /**
     * @param string $model
     * @return Car
@@ -266,6 +264,84 @@ class CarFactory
 
         $className .= 'Car';
 
-        return new $className;
+        return self::buildCar($className);
     }
+
+	protected static function buildCar($carClassName)
+	{
+		/** @var $car Car */
+		if (!class_exists($carClassName))
+		{
+			throw new LogicException("Class $carClassName does not exist.");
+		}
+
+		// Get car stats.
+		$statsMan = new CarStatsManager;
+		$carStats = $statsMan->getStats($carClassName);
+		$engineStats = $carStats->engineStats;
+
+		// Add a gas tank.
+		$gasTank = new GasTank($carStats->gasTankSize);
+
+		// Add an engine.
+		$engine = new CombustionEngine($engineStats, $gasTank);
+
+		// Add a GearShaft.
+		$gearShaft = new GearShaft;
+
+		// Add four Wheels to the drive train using a for loop.
+		$wheels = array();
+		for ($a = 0; $a < $carStats->numberOfWheels; ++$a)
+		{
+			$wheels[] = new Wheel;
+		}
+
+		// Add a drive train
+		$drivetrain = new CarDriveTrain($wheels);
+
+		// Register CarDriveTrain as an observer of GearShaft.
+		$gearShaft->attach($drivetrain);
+
+		// Register CarDriveTrain as an observer of Engine.
+		$engine->attach($drivetrain);
+
+		$car = new $carClassName($engine, $gasTank, $gearShaft, $drivetrain);
+
+		// Register GearShaft as an observer of Car.
+		$car->attach($gearShaft);
+
+		return $car;
+	}
+}
+
+class CarStatsManager
+{
+	/** @return AutomobileStats[] */
+	public static $carStats;
+
+	// TODO: Get this to pull data from a data layer.
+	/** @return AutomobileStats **/
+	public function getStats($carName)
+	{
+		if (static::$carStats[$carName] !== null) return static::$carStats[$carName];
+
+		switch ($carName)
+		{
+			case 'FordFusionCar': $stats = array('ffr' => 0.22, 'pfr' => '0.21', 'wheels' => 4, 'tankSize' => 23.0); break;
+			case 'HondaInsightCar': $stats = array('ffr' => 0.10, 'pfr' => '0.21', 'wheels' => 4, 'tankSize' => 10.6); break;
+		}
+
+		$engineStats = new EngineStats;
+		$engineStats->FORCE_FUEL_RATIO = $stats['ffr'];
+		$engineStats->PRESSURE_FORCE_RATIO = $stats['pfr'];
+
+		$carStats = new AutomobileStats;
+		$carStats->numberOfWheels = $stats['wheels'];
+		$carStats->gasTankSize = $stats['tankSize'];
+		$carStats->engineStats = $engineStats;
+
+		static::$carStats[$carName] = $carStats;
+
+		return static::$carStats[$carName];
+	}
 }
