@@ -15,7 +15,10 @@
 * BSD License: http://www.opensource.org/licenses/bsd-license.php
 **/
 
-require 'lib/misc.inc.php';
+include 'misc/misc.inc.php';
+include 'misc/CarFactory.inc.php';
+include 'misc/CarStatsManager.inc.php';
+
 
 // Singleton pattern
 class Cars
